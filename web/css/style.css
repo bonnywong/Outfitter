@@ -1,0 +1,32 @@
+@import url(https://fonts.googleapis.com/css?family=Arvo:700,700italic);
+
+#demoWrapper {
+    margin: auto;
+    margin-top: 5%;
+    padding: 55px 55px;
+    height: 80%;
+    width: 90%;
+    border: black solid;
+    text-align: center;
+}
+
+/* Vertical alignment magic
+*  http://zerosixthree.se/vertical-align-anything-with-just-3-lines-of-css/
+*/
+.vertalign-parent {
+    -webkit-transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+}
+
+.vertandcenter {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+#fatText {
+    font-family: 'Arvo', serif;
+    font-size: 72;
+    font-weight: 700;
+}
