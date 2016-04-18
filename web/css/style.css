@@ -4,7 +4,7 @@
     margin: auto;
     margin-top: 5%;
     padding: 55px 55px;
-    height: 80%;
+    height: 85%;
     width: 90%;
     border: black solid;
     text-align: center;
@@ -25,8 +25,93 @@
     transform: translateY(-50%);
 }
 
-#fatText {
-    font-family: 'Arvo', serif;
-    font-size: 72;
-    font-weight: 700;
+/*The main container*/
+#container {
+    height: 860px; 
+    width: 960px;
+    margin-left: auto;
+    margin-right: auto;
 }
+
+.fatText {
+    font-family: 'Arvo', serif;
+    font-size: 100;
+    font-weight: 700;
+    text-align: center; 
+    padding-top: 0px;
+    position: relative;
+}
+
+/*index.jsp*/
+#login {   
+    height: 500px; 
+    text-align: center;
+	position: relative;
+	top: 40%;
+	-webkit-transform: translateY(-50%);
+	-o-transform: translateY(-50%);
+	transform: translateY(-50%);
+}
+
+#register {   
+    height: 500px; 
+    text-align: center;
+	position: relative;
+	top: 35%;
+	-webkit-transform: translateY(-50%);
+	-o-transform: translateY(-50%);
+	transform: translateY(-50%);
+    display: none; /*Hidden on load. Displayed with jquery on click event*/
+}    
+/*Matching.jsp*/
+#matching {
+    text-align: center;
+    position: relative;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	-o-transform: translateY(-50%);
+	transform: translateY(-50%);
+}
+
+.imagecontainer {
+    margin: auto;
+    width: 550px; 
+    height: 350px;
+    border: black solid thin;
+}
+
+.image {
+    display: inline-block;
+    width: 65%;
+    height: inherit; 
+    overflow: hidden; 
+    /*border: black solid thin;*/ 
+}
+
+.description {
+    border-left: black solid thin; 
+    display: inline-block;
+    width: 30%; 
+    height: inherit;
+    overflow: hidden; 
+    /*border: black solid thin; */
+}
+
+/*Dropdown menu position*/
+.menucontainer {
+    padding-top: 25px;
+    margin-left: 70%;
+    /*border: black solid thin;*/
+}
+
+/*Settings.jsp*/
+#settings {   
+    height: 500px; 
+    text-align: center;
+	position: relative;
+	top: 40%;
+	-webkit-transform: translateY(-50%);
+	-o-transform: translateY(-50%);
+	transform: translateY(-50%);
+
+}   

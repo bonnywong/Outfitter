@@ -8,10 +8,34 @@
         <servlet-name>index</servlet-name>
         <servlet-class>IndexServlet</servlet-class>
     </servlet>
-
+    <servlet>
+        <servlet-name>matching</servlet-name>
+        <servlet-class>MatchingServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>preference</servlet-name>
+        <servlet-class>PreferenceServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>setting</servlet-name>
+        <servlet-class>SettingsServlet</servlet-class>
+    </servlet>
+    
     <servlet-mapping>
         <servlet-name>index</servlet-name>
         <url-pattern>/index</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>matching</servlet-name>
+        <url-pattern>/matching</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>preference</servlet-name>
+        <url-pattern>/preference</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>setting</servlet-name>
+        <url-pattern>/setting</url-pattern>
     </servlet-mapping>
 
     <welcome-file-list>
