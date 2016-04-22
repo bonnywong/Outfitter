@@ -34,12 +34,12 @@
                 </form>
             </div>
             <div id="register">
-                <form>
+                <form method="POST" action="index">
                     <div class="row">
                         <div class="large-4 columns large-centered">
                             <label>
                                 <h5>Username</h5>
-                                <input type="text" placeholder="Username" />
+                                <input type="text" name="username" placeholder="Username" />
                             </label> 
                         </div>
                     </div>
@@ -47,7 +47,7 @@
                         <div class="large-4 columns large-centered">
                             <label>
                                 <h5>E-mail</h5>
-                                <input type="text" placeholder="user@domain.com" />
+                                <input type="text" name="email" placeholder="user@domain.com" />
                             </label> 
                         </div>
                     </div>
@@ -55,7 +55,7 @@
                         <div class="large-4 columns large-centered">
                             <label>
                                 <h5>Password</h5>
-                                <input type="password" placeholder="Password" />
+                                <input type="password" name="password" placeholder="Password" />
                             </label> 
                         </div>
                     </div>
@@ -63,7 +63,7 @@
                         <div class="large-4 columns large-centered">
                             <label>
                                 <h5>Retype Password</h5>
-                                <input type="password" placeholder="Password" />
+                                <input type="password" name="password2" placeholder="Password" />
                             </label> 
                         </div>
                     </div>

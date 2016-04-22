@@ -19,7 +19,7 @@ public class IndexServlet extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) {
 
         String action = request.getParameter("action");
-        String message = "";
+        String session = request.getSession().getId();
 
         if (action != null) {
             if (action.equals("login")) {
@@ -27,12 +27,10 @@ public class IndexServlet extends HttpServlet {
                 String password = request.getParameter("password");
                 System.out.println("Server: Login.");
                 System.out.println("Username:" + username + ", Password: " + password);
-                message = "Server: Pressed login button!";
-
+                System.out.println("SessionID: " + session);
                 //authUser()
                 //If auth successful.
                 try {
-                    //request.setAttribute("message", message);
                     RequestDispatcher rd = request.getRequestDispatcher("matching.jsp");
                     rd.forward(request, response);
                 } catch (ServletException e) {
@@ -43,10 +41,23 @@ public class IndexServlet extends HttpServlet {
 
             }
             if (action.equals("register")) {
-                System.out.println("Server: Register User");
-                message = "Server: Pressed register button!";
+                String username = request.getParameter("username");
+                String password = request.getParameter("password");
+                String password2 = request.getParameter("password2");
+                String email = request.getParameter("email");
 
-                //
+                System.out.println("Server: Register User");
+                System.out.println("Username:" + username + ", Password: " + password + ", Retyped password: " + password2 + ", Email: " + email);
+                System.out.println("SessionID: " + session);
+
+                try {
+                    RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
+                    rd.forward(request, response);
+                } catch (ServletException e) {
+                    System.out.println("Servlet Exception: " + e.getMessage());
+                } catch (IOException e) {
+                    System.out.println("IO Exception: " + e.getMessage());
+                }
             }
         } else {
             //Nothing at the moment?
@@ -54,7 +65,11 @@ public class IndexServlet extends HttpServlet {
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
-        
+
+    }
+
+    private void dispatch() {
+
     }
 
     /**

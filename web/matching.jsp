@@ -20,9 +20,9 @@
             <li>
                 <a href="#">Menu</a>
                 <ul class="menu">
-                    <li><a href="/settings">Settings</a></li>
+                    <li><a href="settings.jsp">Settings</a></li>
                     <li><a href="#">My liked outfits</a></li>
-                    <li><a href="index">Logout</a></li>
+                    <li><a href="index.jsp">Logout</a></li>
                     <!-- ... -->
                 </ul>
             </li>

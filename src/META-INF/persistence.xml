@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence" version="2.1">
+
+    <persistence-unit name="NewPersistenceUnit">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <class>Models.UserEntity</class>
+        <properties>
+            <property name="hibernate.connection.url" value="jdbc:sqlite:C:/Users/swebo_000/IdeaProjects/Outfitter/outfitterdb.db"/>
+            <property name="hibernate.connection.driver_class" value="org.sqlite.JDBC"/>
+            <property name="hibernate.archive.autodetection" value="class"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hbm2ddl.auto" value="update"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.SQLiteDialect"/>
+        </properties>
+    </persistence-unit>
+</persistence>
