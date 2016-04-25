@@ -1,27 +1,51 @@
 package Models;
 
 import javax.persistence.*;
+import java.util.Set;
 
 /**
- * Created by swebo_000 on 2016-04-21.
+ * This Entity represents a User.
+ * Created by swebo_000 on 2016-04-22.
  */
 @Entity
 @Table(name = "users", schema = "", catalog = "")
 public class UserEntity {
-    private int id;
+    private int userId;
     private String username;
     private String email;
     private String password;
     private String role;
 
-    @Id
-    @Column(name = "id")
-    public int getId() {
-        return id;
+    private Set<UserWeightEntity> weightSet;
+
+    public UserEntity() {
+
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public UserEntity(String username, String email, String password, String role) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
+    public UserEntity(String username, String email, String password, String role, Set<UserWeightEntity> weightSet) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.weightSet = weightSet;
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     @Basic
@@ -64,6 +88,16 @@ public class UserEntity {
         this.role = role;
     }
 
+    @ManyToMany(cascade =  CascadeType.ALL)
+    @JoinTable(name="user_weight_maps", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    public Set<UserWeightEntity> getWeights() {
+        return this.weightSet;
+    }
+
+    public void setWeights(Set weightSet)     {
+        this.weightSet = weightSet;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -71,7 +105,7 @@ public class UserEntity {
 
         UserEntity that = (UserEntity) o;
 
-        if (id != that.id) return false;
+        if (userId != that.userId) return false;
         if (username != null ? !username.equals(that.username) : that.username != null) return false;
         if (email != null ? !email.equals(that.email) : that.email != null) return false;
         if (password != null ? !password.equals(that.password) : that.password != null) return false;
@@ -82,7 +116,7 @@ public class UserEntity {
 
     @Override
     public int hashCode() {
-        int result = id;
+        int result = userId;
         result = 31 * result + (username != null ? username.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
