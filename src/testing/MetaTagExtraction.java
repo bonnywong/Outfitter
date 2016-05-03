@@ -1,8 +1,6 @@
 package testing;
 
 import javax.imageio.ImageIO;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -22,10 +20,6 @@ public class MetaTagExtraction {
     private static HashMap<String, Integer> tagCountMap = new HashMap<String, Integer>();
     private static HashSet<String> unusedData = new HashSet<String>();
     private static HashMap<String, Integer> usedTags = new HashMap<String, Integer>();
-
-    private static Connection c;
-    private static EntityManagerFactory emfactory;
-    private static EntityManager em;
 
     // TODO replace file locations
     private final static String IMAGES_PATH = "C:/Users/Filiz/Downloads/python-crawler/images/";
