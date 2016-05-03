@@ -1,3 +1,5 @@
+import Authentication.UserLogic;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -22,14 +24,25 @@ public class IndexServlet extends HttpServlet {
         String session = request.getSession().getId();
 
         if (action != null) {
+
+            UserLogic userLogic = new UserLogic(); //Remember to close this.
+
             if (action.equals("login")) {
                 String username = request.getParameter("username");
                 String password = request.getParameter("password");
                 System.out.println("Server: Login.");
                 System.out.println("Username:" + username + ", Password: " + password);
                 System.out.println("SessionID: " + session);
-                //authUser()
-                //If auth successful.
+
+                //User authentication below:
+                if (userLogic.authUser(username, password)) {
+                    System.out.println("User exists and successfully authenticated!");
+                } else {
+                    System.out.println("User does not exist!");
+                }
+
+                userLogic.close();
+
                 try {
                     RequestDispatcher rd = request.getRequestDispatcher("matching.jsp");
                     rd.forward(request, response);
@@ -40,6 +53,7 @@ public class IndexServlet extends HttpServlet {
                 }
 
             }
+
             if (action.equals("register")) {
                 String username = request.getParameter("username");
                 String password = request.getParameter("password");
@@ -49,6 +63,16 @@ public class IndexServlet extends HttpServlet {
                 System.out.println("Server: Register User");
                 System.out.println("Username:" + username + ", Password: " + password + ", Retyped password: " + password2 + ", Email: " + email);
                 System.out.println("SessionID: " + session);
+
+                //User registration below.
+                if(userLogic.registerUser(username, password, email)) {
+                    System.out.println("Registration successful!");
+
+                } else {
+                    System.out.println("Registration failed!");
+                }
+
+                userLogic.close();
 
                 try {
                     RequestDispatcher rd = request.getRequestDispatcher("index.jsp");

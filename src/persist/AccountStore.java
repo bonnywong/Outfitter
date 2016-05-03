@@ -22,12 +22,24 @@ public class AccountStore {
         em = emfactory.createEntityManager();
     }
 
-    public void persistUser() {
+
+    public void persistUser(UserEntity user) {
+        em.getTransaction().begin();
+        em.persist(user);
+        em.getTransaction().commit();
     }
 
     public UserEntity fetchUser(String username) {
-        //Query query = em.createQuery("select u from UserEntity u where ")
-        return null;
+        Query query = em.createQuery("select u from UserEntity u where u.username = :username");
+        query.setParameter("username", username);
+        return (UserEntity) query.getSingleResult();
+    }
+
+
+    public boolean userExists(String username) {
+        Query query = em.createQuery("select u from UserEntity u where u.username = :username");
+        query.setParameter("username", username);
+        return query.getResultList().size() == 1;
     }
 
     public UserEntity fetchUser(int id) {

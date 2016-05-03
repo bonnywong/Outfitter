@@ -14,6 +14,7 @@ public class UserEntity {
     private String username;
     private String email;
     private String password;
+    private String salt;
     private String role;
 
     private Set<UserWeightEntity> weightSet;
@@ -22,17 +23,19 @@ public class UserEntity {
 
     }
 
-    public UserEntity(String username, String email, String password, String role) {
+    public UserEntity(String username, String email, String password, String salt, String role) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.salt = salt;
         this.role = role;
     }
 
-    public UserEntity(String username, String email, String password, String role, Set<UserWeightEntity> weightSet) {
+    public UserEntity(String username, String email, String password, String salt, String role, Set<UserWeightEntity> weightSet) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.salt = salt;
         this.role = role;
         this.weightSet = weightSet;
     }
@@ -67,6 +70,14 @@ public class UserEntity {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    @Basic
+    @Column(name = "salt")
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) { this.salt = salt;}
 
     @Basic
     @Column(name = "password")

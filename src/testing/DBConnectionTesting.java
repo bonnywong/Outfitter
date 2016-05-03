@@ -71,7 +71,7 @@ public class DBConnectionTesting {
     private static UserEntity generateRandomUser() {
         String uuid = UUID.randomUUID().toString().replace("-", "");
         String username = "user" + uuid.substring(0, 5);
-        return new UserEntity(username, username + "@domain.com", uuid.substring(5, 15), "user");
+        return new UserEntity(username, username + "@domain.com", uuid.substring(5, 15),"auto-generated-user", "user");
     }
 
     /*-------------------------------Database stuff below------------------------------------*/
