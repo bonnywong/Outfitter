@@ -1,4 +1,4 @@
-<%--
+<%@ page import="Models.UserEntity" %><%--
   Created by IntelliJ IDEA.
   User: swebo_000
   Date: 2016-04-18
@@ -6,6 +6,13 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+    UserEntity user = (UserEntity) session.getAttribute("user");
+    if (user == null) {
+        request.getSession().invalidate();
+%> <jsp:forward page="index.jsp" /> <%
+    }
+%>
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="css/style.css">
@@ -15,13 +22,26 @@
 
 <body>
 <div id="container">
+    <div class="menucontainer">
+        <ul class="dropdown menu" data-dropdown-menu>
+            <li>
+                <a href="#"><%=user.getUsername()%></a>
+                <ul class="menu">
+                    <li><a href="matching.jsp">Matching</a></li>
+                    <li><a href="#">My liked outfits</a></li>
+                    <li><a href="logout">Logout</a></li>
+                    <!-- ... -->
+                </ul>
+            </li>
+        </ul>
+    </div>
     <div class="fatText">Settings</div>
     <div id="settings">
         <form method="POST" action="/settings">
             <div class="row">
                 <div class="large-4 columns large-centered">
                     <label>
-                        <h5>Your Username: username</h5>
+                        <h5>Your Username: <%= user.getUsername()%></h5>
                         <br>
                     </label>
                 </div>
@@ -29,7 +49,7 @@
             <div class="row">
                 <div class="large-4 columns large-centered">
                     <label>
-                        <h5>Your E-mail: username@domain.com</h5>
+                        <h5>Your E-mail: <%= user.getEmail()%></h5>
                         <br>
                     </label>
                 </div>

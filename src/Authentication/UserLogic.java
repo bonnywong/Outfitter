@@ -22,16 +22,21 @@ public class UserLogic {
 
     public boolean authUser(String username, String password) {
 
-        UserEntity user = db.fetchUser(username);
-        String saltString = user.getSalt();
-        String passwordHash = user.getPassword();
-        byte[] salt = new byte[] {};
-        try {
-            salt = new BASE64Decoder().decodeBuffer(saltString);
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
+        if (db.userExists(username)) {
+            UserEntity user = db.fetchUser(username);
+            String saltString = user.getSalt();
+            String passwordHash = user.getPassword();
+            byte[] salt = new byte[] {};
+            try {
+                salt = new BASE64Decoder().decodeBuffer(saltString);
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+            }
+            return passwordHash.equals(hashPassword(password, salt));
+        } else {
+            //User doesn't exist.
+            return false;
         }
-        return passwordHash.equals(hashPassword(password, salt));
     }
 
     public boolean registerUser(String username, String password, String email) {
@@ -48,6 +53,17 @@ public class UserLogic {
         }
     }
 
+
+    //A bit unnecessary maybe.
+    public UserEntity getUser(String username) {
+        if (db.userExists(username)) {
+            UserEntity user = db.fetchUser(username);
+            System.out.println("\nFetched user with username: " + user.getUsername() + "\n");
+            return db.fetchUser(username);
+        } else {
+            return null;
+        }
+    }
 
     /**
      * Generates a random 256-bit salt value.

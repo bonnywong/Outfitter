@@ -5,6 +5,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
@@ -21,7 +22,7 @@ public class IndexServlet extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) {
 
         String action = request.getParameter("action");
-        String session = request.getSession().getId();
+        String sessionId = request.getSession().getId();
 
         if (action != null) {
 
@@ -32,26 +33,22 @@ public class IndexServlet extends HttpServlet {
                 String password = request.getParameter("password");
                 System.out.println("Server: Login.");
                 System.out.println("Username:" + username + ", Password: " + password);
-                System.out.println("SessionID: " + session);
+                System.out.println("SessionID: " + sessionId);
 
                 //User authentication below:
                 if (userLogic.authUser(username, password)) {
                     System.out.println("User exists and successfully authenticated!");
+                    request.getSession().setAttribute("user", userLogic.getUser(username));
+                    dispatch(request, response, "matching.jsp", "");
+                    //Attach UserEntity to the session.
                 } else {
-                    System.out.println("User does not exist!");
+                    System.out.println("Wrong username or password inserted!");
+                    dispatch(request, response, "index.jsp", "");
+                    //TODO: Display some kind of message?
+
                 }
 
                 userLogic.close();
-
-                try {
-                    RequestDispatcher rd = request.getRequestDispatcher("matching.jsp");
-                    rd.forward(request, response);
-                } catch (ServletException e) {
-                    System.out.println("Servlet Exception: " + e.getMessage());
-                } catch (IOException e) {
-                    System.out.println("IO Exception: " + e.getMessage());
-                }
-
             }
 
             if (action.equals("register")) {
@@ -62,7 +59,7 @@ public class IndexServlet extends HttpServlet {
 
                 System.out.println("Server: Register User");
                 System.out.println("Username:" + username + ", Password: " + password + ", Retyped password: " + password2 + ", Email: " + email);
-                System.out.println("SessionID: " + session);
+                System.out.println("SessionID: " + sessionId);
 
                 //User registration below.
                 if(userLogic.registerUser(username, password, email)) {
@@ -71,17 +68,8 @@ public class IndexServlet extends HttpServlet {
                 } else {
                     System.out.println("Registration failed!");
                 }
-
+                dispatch(request, response, "index.jsp", "");
                 userLogic.close();
-
-                try {
-                    RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
-                    rd.forward(request, response);
-                } catch (ServletException e) {
-                    System.out.println("Servlet Exception: " + e.getMessage());
-                } catch (IOException e) {
-                    System.out.println("IO Exception: " + e.getMessage());
-                }
             }
         } else {
             //Nothing at the moment?
@@ -92,22 +80,14 @@ public class IndexServlet extends HttpServlet {
 
     }
 
-    private void dispatch() {
-
+    private void dispatch(HttpServletRequest request, HttpServletResponse response, String location, String message) {
+        try {
+            RequestDispatcher rd = request.getRequestDispatcher(location);
+            rd.forward(request, response);
+        } catch (ServletException e) {
+            System.out.println("Servlet Exception: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("IO Exception: " + e.getMessage());
+        }
     }
-
-    /**
-     * Create a new user.
-     */
-    private void newUser() {
-        //TODO: Register user.
-    }
-
-    /**
-     * Log in an existing user
-     */
-    private void authUser() {
-        //TODO: Authenticate user.
-    }
-
 }

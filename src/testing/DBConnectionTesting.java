@@ -31,37 +31,40 @@ public class DBConnectionTesting {
         //    insertUser(generateRandomUser());
         //}
 
-        //Insert some tags
-        String[] tags = new String[] {"thin", "red", "blue","thick", "wool", "t-shirt", "shorts"};
-        if (getAllTags().size() == 0) {
-            for (String tag : tags) {
-                insertTag(new TagEntity(tag));
-            }
-        }
+//        //Insert some tags
+//        String[] tags = new String[] {"thin", "red", "blue","thick", "wool", "t-shirt", "shorts"};
+//        if (getAllTags().size() == 0) {
+//            for (String tag : tags) {
+//                insertTag(new TagEntity(tag));
+//            }
+//        }
+//
+//
+//        //Associate each user with a tag and generate some random weight.
+//        if (getAllUserWeightMaps().size() == 0) {
+//            for (UserEntity user : getAllUsers()) {
+//                Set<UserWeightEntity> userWeightSet = new HashSet<UserWeightEntity>();
+//                for (TagEntity tag : getAllTags()) {
+//                    double random = ThreadLocalRandom.current().nextDouble(-1.0, 1.0);
+//                    UserWeightEntity userWeight = new UserWeightEntity(user.getUserId(), tag.getTagId(), random);
+//                    userWeightSet.add(userWeight); //Add the new UserWeightEntity to the set.
+//                }
+//                setUserWeightSet(user, userWeightSet); //Associate the new user-tag-weights with the user.
+//            }
+//        }
+//
+//        //Let's see if this worked. Fetch a random user by their id. And print the list of weights associated with them.
+//        UserEntity user = em.find(UserEntity.class, new Random().nextInt(getAllUsers().size() + 4)); //Adding 4 here because the user_id has been shifted by 4 for some reason.
+//        for (UserWeightEntity uw : user.getWeights()) {
+//            System.out.println("user_id: " + uw.getUserId() + ". tag_id: " + uw.getTagId() + ". weight: " + uw.getWeight());
+//        }
 
-
-        //Associate each user with a tag and generate some random weight.
-        if (getAllUserWeightMaps().size() == 0) {
-            for (UserEntity user : getAllUsers()) {
-                Set<UserWeightEntity> userWeightSet = new HashSet<UserWeightEntity>();
-                for (TagEntity tag : getAllTags()) {
-                    double random = ThreadLocalRandom.current().nextDouble(-1.0, 1.0);
-                    UserWeightEntity userWeight = new UserWeightEntity(user.getUserId(), tag.getTagId(), random);
-                    userWeightSet.add(userWeight); //Add the new UserWeightEntity to the set.
-                }
-                setUserWeightSet(user, userWeightSet); //Associate the new user-tag-weights with the user.
-            }
-        }
-
-        //Let's see if this worked. Fetch a random user by their id. And print the list of weights associated with them.
-        UserEntity user = em.find(UserEntity.class, new Random().nextInt(getAllUsers().size() + 4)); //Adding 4 here because the user_id has been shifted by 4 for some reason.
-        for (UserWeightEntity uw : user.getWeights()) {
-            System.out.println("user_id: " + uw.getUserId() + ". tag_id: " + uw.getTagId() + ". weight: " + uw.getWeight());
-        }
-
+        UserEntity user = em.find(UserEntity.class, 11);
         //Remember to close the connection.
         em.close();
         emfactory.close();
+
+        System.out.println(user.getUsername());
     }
 
     /**

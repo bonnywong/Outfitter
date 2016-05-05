@@ -1,4 +1,4 @@
-<%--
+<%@ page import="Models.UserEntity" %><%--
   Created by IntelliJ IDEA.
   User: swebo_000
   Date: 2016-04-18
@@ -6,6 +6,13 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+    UserEntity user = (UserEntity) session.getAttribute("user");
+    if (user == null) {
+        request.getSession().invalidate();
+        %> <jsp:forward page="index.jsp" /> <%
+    }
+%>
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="css/style.css">
@@ -18,11 +25,11 @@
     <div class="menucontainer">
         <ul class="dropdown menu" data-dropdown-menu>
             <li>
-                <a href="#">Menu</a>
+                <a href="#"><%= user.getUsername() %></a>
                 <ul class="menu">
                     <li><a href="settings.jsp">Settings</a></li>
                     <li><a href="#">My liked outfits</a></li>
-                    <li><a href="index.jsp">Logout</a></li>
+                    <li><a href="logout">Logout</a></li>
                     <!-- ... -->
                 </ul>
             </li>
@@ -82,7 +89,6 @@
         </form>
     </div>
 </div>
-
 
 
 <script src="js/vendor/jquery.js"></script>
