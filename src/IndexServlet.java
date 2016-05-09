@@ -38,9 +38,9 @@ public class IndexServlet extends HttpServlet {
                 //User authentication below:
                 if (userLogic.authUser(username, password)) {
                     System.out.println("User exists and successfully authenticated!");
-                    request.getSession().setAttribute("user", userLogic.getUser(username));
-                    dispatch(request, response, "matching.jsp", "");
                     //Attach UserEntity to the session.
+                    request.getSession().setAttribute("user", userLogic.getUser(username));
+                    dispatch(request, response, "/matching", "");
                 } else {
                     System.out.println("Wrong username or password inserted!");
                     dispatch(request, response, "index.jsp", "");

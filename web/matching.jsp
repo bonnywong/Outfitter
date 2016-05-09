@@ -12,6 +12,15 @@
         request.getSession().invalidate();
         %> <jsp:forward page="index.jsp" /> <%
     }
+
+    //Imagine we've received products here.
+    int topId = (Integer) request.getSession().getAttribute("topId"); //leading 0 removed because else Java thinks it's an octal
+    int botId = (Integer) request.getSession().getAttribute("botId"); //
+
+    //Send these to the servlet
+    //TODO: Do the reverse, call Servlet and forward to JSP.......
+    //request.setAttribute("idTop", idTop);
+    //request.setAttribute("idBot", idBot);
 %>
 <html>
 <head>
@@ -24,7 +33,7 @@
 <div id="container">
     <div class="menucontainer">
         <ul class="dropdown menu" data-dropdown-menu>
-            <li>
+            <li class=".is-dropdown-submenu-parent">
                 <a href="#"><%= user.getUsername() %></a>
                 <ul class="menu">
                     <li><a href="settings.jsp">Settings</a></li>
@@ -39,24 +48,7 @@
     <div id="matching">
         <div class="imagecontainer">
             <div class="image">
-                Test.Test.Test.Test.Test.Test.Test.
-                Test.Test.Test.Test.Test.Test.Test.
-                Test.Test.Test.Test.Test.Test.Test.
-                Test.Test.Test.Test.Test.Test.Test.
-                Test.Test.Test.Test.Test.Test.Test.
-                Test.Test.Test.Test.Test.Test.Test.
-                Test.Test.Test.Test.Test.Test.Test.
-                Test.Test.Hello! Overflowing!
-                Test.Test.Test.Test.Test.Test.Test.
-                Test.Test.Test.Test.Test.Test.Test.
-                Test.Test.Test.Test.Test.Test.Test.
-                Test.Test.Test.Test.Test.Test.Test.
-                Test.Test.Test.Test.Test.Test.Test.
-                Test.Test.Test.Test.Test.Test.Test.
-                Test.Test.Test.Test.Test.Test.Test.
-                Test.Test.Test.Test.Test.Test.Test.
-                Test.Test.Test.Test.Test.Test.Test.
-                Test.Test.Test.Test.Test.Test.Test.
+                <img src="image/0<%= topId %>"/>
             </div>
             <div class="description">
                 Description here.
@@ -65,6 +57,7 @@
         <br>
         <div class="imagecontainer">
             <div class="image">
+                <img src="image/0<%= botId %>"/>
             </div>
             <div class="description">
                 Description here.

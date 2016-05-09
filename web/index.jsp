@@ -1,4 +1,12 @@
+<%@ page import="Models.UserEntity" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+    //Forward the user to the matching page if they're already logged in.
+    UserEntity user = (UserEntity) session.getAttribute("user");
+    if (user != null) {
+        %> <jsp:forward page="matching.jsp"/> <%
+    }
+%>
 <html>
     <head>
         <link rel="stylesheet" type="text/css" href="css/style.css">

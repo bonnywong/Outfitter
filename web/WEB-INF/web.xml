@@ -28,6 +28,10 @@
         <servlet-name>logout</servlet-name>
         <servlet-class>LogoutServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>image</servlet-name>
+        <servlet-class>ImageServlet</servlet-class>
+    </servlet>
     
     <servlet-mapping>
         <servlet-name>index</servlet-name>
@@ -49,6 +53,10 @@
         <servlet-name>logout</servlet-name>
         <url-pattern>/logout</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>image</servlet-name>
+        <url-pattern>/image/*</url-pattern>
+    </servlet-mapping>r
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>

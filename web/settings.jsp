@@ -24,7 +24,7 @@
 <div id="container">
     <div class="menucontainer">
         <ul class="dropdown menu" data-dropdown-menu>
-            <li>
+            <li class=".is-dropdown-submenu-parent">
                 <a href="#"><%=user.getUsername()%></a>
                 <ul class="menu">
                     <li><a href="matching.jsp">Matching</a></li>
