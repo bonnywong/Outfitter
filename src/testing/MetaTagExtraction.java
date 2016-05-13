@@ -2,10 +2,7 @@ package testing;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.sql.*;
 import java.util.Collections;
 import java.util.HashMap;
@@ -176,5 +173,17 @@ public class MetaTagExtraction {
             }
         }
         return usefulTags;
+    }
+
+    public void getTagsFile(Connection c) throws Exception {
+        PrintWriter writer = new PrintWriter("allUsedTags", "UTF-8");
+        String query = "SELECT name FROM tags";
+        Statement stmt = c.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+        while(rs.next()) {
+            writer.println(rs.getString("name"));
+        }
+        rs.close();
+        writer.close();
     }
 }
