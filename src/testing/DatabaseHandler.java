@@ -2,7 +2,6 @@ package testing;
 
 import Models.*;
 
-import java.io.PrintWriter;
 import java.sql.*;
 import java.util.*;
 
@@ -17,11 +16,12 @@ public class DatabaseHandler {
             // testing the DatabaseHandler class
             DatabaseHandler d = new DatabaseHandler();
             UserEntity testUser = new UserEntity("forDBtesting2", "mailadress@kth.se", "pass123", "user");
-            d.insertUserBucketWeights(testUser);
-            //d.insertUser(testUser);
-            //ProductEntity p = d.findProduct(testUser, "top", 5);
-            System.out.println("Find product: " + (System.currentTimeMillis() - start));
-            //d.update(testUser, p, 1);
+            ProductEntity p = d.findProduct(testUser, "top", 5);
+            System.out.println(p.getPid() + " found: " + (System.currentTimeMillis() - start));
+            ProductEntity match = d.findMatch(p,testUser, 5);
+            System.out.println(match.getPid() + " matching : " + (System.currentTimeMillis() -start));
+            d.updateMatch(testUser,p,match,1);
+            d.update(testUser, p, 1);
             System.out.println("Update: " + (System.currentTimeMillis() - start));
         } catch (Exception e) {
             e.printStackTrace();
@@ -121,22 +121,24 @@ public class DatabaseHandler {
 
     public ProductEntity findMatch(ProductEntity p, UserEntity u, int limit) throws SQLException {
         String query = "SELECT pid FROM Bucket " +
-                "JOIN (SELECT toBucket, weight FROM Bucket_weight " +
+                "JOIN (SELECT bottomBucket, weight FROM Bucket_weight " +
                 "WHERE topBucket IN (SELECT bucket FROM Bucket " +
                 "WHERE pid = ?) " +
                 "AND user = ?) AS w " +
-                "ON w.toBucket = bucket ORDER BY w.weight LIMIT " + limit;
+                "ON w.bottomBucket = bucket ORDER BY w.weight LIMIT " + limit;
         PreparedStatement stmt = c.prepareStatement(query);
         stmt.setString(1, p.getPid());
         stmt.setInt(2, u.getUserId());
-        ResultSet rs = stmt.executeQuery();
+        ResultSet match = stmt.executeQuery();
         int row = 1 + (int)(Math.random() * (limit-1));
         int counter = 0;
-        while (rs.next() && counter != row) {
+        while (match.next() && counter != row) {
+            System.out.println("is closed: "+match.isClosed());
             counter++;
         }
-        String pid = rs.getString("pid");
-        rs.close();
+        // TODO this line gives SQLException: ResultSet closed ???
+        String pid = match.getString("pid");
+        match.close();
         return new ProductEntity(pid);
     }
 
@@ -159,16 +161,26 @@ public class DatabaseHandler {
         rs.close();
     }
 
-    public void getTagsFile() throws Exception {
-        PrintWriter writer = new PrintWriter("allUsedTags", "UTF-8");
-        String query = "SELECT name FROM tags";
-        Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(query);
-        while(rs.next()) {
-            writer.println(rs.getString("name"));
+    public void updateMatch(UserEntity user, ProductEntity top, ProductEntity bottom,int like) throws SQLException {
+        String buckets = "SELECT weight, topBucket, bottomBucket FROM Bucket_weight WHERE user = ? AND " +
+                "topBucket IN (SELECT bucket FROM Bucket WHERE pid = ? AND top = 'top') AND " +
+                "bottomBucket IN (SELECT bucket FROM Bucket WHERE pid = ? AND top = 'bottom')";
+        PreparedStatement weightStmt = c.prepareStatement(buckets);
+        weightStmt.setInt(1, user.getUserId());
+        weightStmt.setString(2, top.getPid());
+        weightStmt.setString(2, bottom.getPid());
+        ResultSet rs = weightStmt.executeQuery();
+        while (rs.next()) {
+            String update = "UPDATE bucket_weights " +
+                    "SET weight = ? WHERE user_id = ? AND topBucket = ? AND bottomBucket = ?";
+            PreparedStatement updateStmt = c.prepareStatement(update);
+            updateStmt.setDouble(1, rs.getDouble("weight") + (like *ALPHA * Math.abs(like - rs.getDouble("weight"))));
+            updateStmt.setInt(2, user.getUserId());
+            updateStmt.setInt(3, rs.getInt("topBucket"));
+            updateStmt.setInt(4, rs.getInt("bottomBucket"));
+            updateStmt.executeUpdate();
         }
         rs.close();
-        writer.close();
     }
 
     public void close() throws SQLException{
