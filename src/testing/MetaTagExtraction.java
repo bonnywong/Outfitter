@@ -12,32 +12,58 @@ public class MetaTagExtraction {
 
     private static HashMap<String, Integer> tagCountMap = new HashMap<String, Integer>();
     private static HashSet<String> unusedData = new HashSet<String>();
-    private static HashMap<String, Integer> usedTags = new HashMap<String, Integer>();
+    private static HashMap<String, Integer> usedTags = new HashMap<String, Integer>(); //tag name + id I assume
 
-    private final static String IMAGES_PATH = "C:/Users/Filiz/Downloads/python-crawler/images/";
-    private final static String BLANK_IMAGE_PATH = "C:/Users/Filiz/Downloads/python-crawler/images/0102164002.jpg";
-    private final static String TOP_BUCKET = "C:/Users/Filiz/Downloads/topBuckets.txt";
-    private final static String BOTTOM_BUCKET = "C:/Users/Filiz/Downloads/bottomBuckets.txt";
+//    private final static String IMAGES_PATH = "C:/Users/Filiz/Downloads/python-crawler/images/";
+//    private final static String BLANK_IMAGE_PATH = "C:/Users/Filiz/Downloads/python-crawler/images/0102164002.jpg";
+//    private final static String TOP_BUCKET = "C:/Users/Filiz/Downloads/topBuckets.txt";
+//    private final static String BOTTOM_BUCKET = "C:/Users/Filiz/Downloads/bottomBuckets.txt";
+
+    private final static String IMAGES_PATH = "C:/Users/swebo_000/Desktop/python-crawler/images/";
+    private final static String BLANK_IMAGE_PATH = "C:/Users/swebo_000/Desktop/python-crawler/images/0102164002.jpg";
+    private final static String TOP_BUCKET = "C:/Users/swebo_000/Downloads/topBuckets.txt";
+    private final static String BOTTOM_BUCKET = "C:/Users/swebo_000/Downloads/bottomBuckets.txt";
 
     private static int dataSize = 0;
     private static int tagId = 0;
 
+    private static Connection imagesCon;
+    private static Connection outfitterCon;
+
     public static void main(String[] args) {
         try {
-            Connection c = connect("jdbc:sqlite:images.db");
+            imagesCon = connect("jdbc:sqlite:images.db");
+            outfitterCon = connect("jdbc:sqlite:outfitterdb.db");
+
+            outfitterCon.setAutoCommit(false);
+
             System.out.println("connected");
-            getAllTags(c);
+            getAllTags();
             System.out.println("alltags");
-            Connection outfitter = connect("jdbc:sqlite:outfitterdb.db");
-            resetTables(outfitter);
-            reduceTagsInDB(c, outfitter);
-            System.out.println("reduce");
-            buildBucketDB(outfitter, TOP_BUCKET, "top");
-            System.out.println("Top bucket");
-            buildBucketDB(outfitter, BOTTOM_BUCKET, "bottom");
-            System.out.println("Bottom bucket");
-            c.close();
-            outfitter.close();
+
+            long start = System.currentTimeMillis();
+
+            System.out.println("Resetting tables...");
+            resetTables(outfitterCon);
+
+            System.out.println("Reducing tags in DB.");
+            reduceTagsInDB();
+            System.out.println("Reduced.");
+
+            System.out.println("Building top-bucket");
+            buildBucketDB(TOP_BUCKET, "top");
+            System.out.println("Bucket built.");
+
+            System.out.println("Building bottom-bucket");
+            buildBucketDB(BOTTOM_BUCKET, "bottom");
+            System.out.println("Bucket built.");
+
+            outfitterCon.commit();
+            imagesCon.close();
+            outfitterCon.close();
+
+            System.out.println("Time taken: " + (System.currentTimeMillis() - start) + "ms");
+
         } catch (Exception e) {
             System.err.println(e.getClass() + " " + e.getMessage());
             System.exit(-1);
@@ -49,7 +75,7 @@ public class MetaTagExtraction {
         return DriverManager.getConnection(db);
     }
 
-    private static void buildBucketDB(Connection c, String filename, String top) {
+    private static void buildBucketDB(String filename, String top) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(new File(filename)));
             String line;
@@ -59,19 +85,20 @@ public class MetaTagExtraction {
                 String[] pids = parts[1].split(" ");
                 for(String pid : pids) {
                     if(!unusedData.contains(pid)) {
-                        insert(c, "INSERT INTO Bucket VALUES(" + bucket + ",'" + pid + "','" + top +"')");
+                        insert("INSERT INTO Bucket VALUES(" + bucket + ",'" + pid + "','" + top +"')");
                     }
                 }
             }
             reader.close();
         } catch (IOException e) {
+            System.out.println(e.getMessage());
             e.printStackTrace();
         }
     }
 
-    private static void getAllTags(Connection c) throws SQLException, IOException {
+    private static void getAllTags() throws SQLException, IOException {
         String query = "SELECT Id, Metadata FROM Images";
-        Statement stmt = c.createStatement();
+        Statement stmt = imagesCon.createStatement();
         ResultSet rs = stmt.executeQuery(query);
         while (rs.next()) {
             if (usingPicture(rs.getString("Id"))) {
@@ -113,9 +140,9 @@ public class MetaTagExtraction {
         return true;
     }
 
-    private static void reduceTagsInDB(Connection c, Connection outfitter) throws SQLException, ClassNotFoundException {
+    private static void reduceTagsInDB() throws SQLException, ClassNotFoundException {
         String query = "SELECT Id, Metadata, Top, Gender FROM Images";
-        Statement stmt = c.createStatement();
+        Statement stmt = imagesCon.createStatement();
         ResultSet rs = stmt.executeQuery(query);
         HashSet<Integer> nrOfTags = new HashSet<Integer>();
         while(rs.next()) {
@@ -123,15 +150,34 @@ public class MetaTagExtraction {
                 HashSet<String> usefulTags = choseUsefulTags(rs.getString("Metadata").split(" "));
                 nrOfTags.add(usefulTags.size());
                 String pid = rs.getString("Id");
-                insert(outfitter, "insert into product values('" + pid + "','" + rs.getString("Top") + "');");
-                addProductTag(outfitter, rs.getString("Gender"), pid);
+                insert("insert into product values('" + pid + "','" + rs.getString("Top") + "');");
+                addProductTag(rs.getString("Gender"), pid);
                 for(String tag : usefulTags) {
-                    addProductTag(outfitter, tag, pid);
+                    addProductTag(tag, pid);
                 }
             }
         }
         stmt.close();
         rs.close();
+    }
+
+    private static void addProductTag(String tag, String pid) {
+        if(usedTags.get(tag) == null) {
+            usedTags.put(tag, tagId);
+            insert("insert into tags values(" + tagId + ",'" + tag +"');");
+            tagId++;
+        }
+        insert("insert into productTag values('" + pid + "'," + usedTags.get(tag) + ");");
+    }
+
+    private static void insert(String query) {
+        try {
+            Statement stmt = outfitterCon.createStatement();
+            stmt.executeUpdate(query);
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void resetTables(Connection c) throws SQLException{
@@ -145,24 +191,6 @@ public class MetaTagExtraction {
         stmt.executeUpdate(tags);
         stmt.executeUpdate(bucket);
         stmt.close();
-    }
-
-    private static void addProductTag(Connection c, String tag, String pid) {
-        if(usedTags.get(tag) == null) {
-            usedTags.put(tag, tagId++);
-            insert(c, "insert into tags values(" + tagId + ",'" + tag +"');");
-        }
-        insert(c, "insert into productTag values('" + pid + "'," + usedTags.get(tag) + ");");
-    }
-
-    private static void insert(Connection c, String query) {
-        try {
-            Statement stmt = c.createStatement();
-            stmt.executeUpdate(query);
-            stmt.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     private static HashSet<String> choseUsefulTags(String[] metaTags) {
