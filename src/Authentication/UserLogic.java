@@ -4,11 +4,13 @@ import Models.UserEntity;
 import persist.AccountStore;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
+import testing.DatabaseHandler;
 
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.sql.SQLException;
 
 /**
  * Logic for handling user authentication and
@@ -19,6 +21,7 @@ import java.security.SecureRandom;
 public class UserLogic {
 
     AccountStore db = new AccountStore();
+    DatabaseHandler dbHandler = new DatabaseHandler();
 
     public boolean authUser(String username, String password) {
 
@@ -39,7 +42,7 @@ public class UserLogic {
         }
     }
 
-    public boolean registerUser(String username, String password, String email) {
+    public boolean registerUser(String username, String password, String email) throws SQLException{
         if (db.userExists(username)){
             return false;
         } else {
@@ -53,7 +56,9 @@ public class UserLogic {
         }
     }
 
-
+    public void persistSettings(UserEntity user ) {
+        db.persistSettings(user);
+    }
     //A bit unnecessary maybe.
     public UserEntity getUser(String username) {
         if (db.userExists(username)) {

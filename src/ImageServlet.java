@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 
 /**
- * This servlet only serves images.
+ * This servlet only serves JPG image files.
  *
  * Created by swebo_000 on 2016-05-06.
  */

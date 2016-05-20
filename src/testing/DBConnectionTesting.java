@@ -1,14 +1,12 @@
 package testing;
 
-import Models.TagEntity;
-import Models.UserEntity;
-import Models.UserWeightEntity;
-import Models.UserWeightMapEntity;
+import Models.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -59,12 +57,40 @@ public class DBConnectionTesting {
 //            System.out.println("user_id: " + uw.getUserId() + ". tag_id: " + uw.getTagId() + ". weight: " + uw.getWeight());
 //        }
 
-        UserEntity user = em.find(UserEntity.class, 11);
+//        UserEntity user = em.find(UserEntity.class, 20);
+//
+//        System.out.println(user.getUsername());
+//        for (UserWeightEntity uw : user.getWeights()) {
+//            System.out.println("user_id: " + uw.getUserId() + ". tag_id: " + uw.getTagId() + ". weight: " + uw.getWeight());
+//        }
+
+        ProductEntity product = fetchProduct("0351721007");
+        System.out.println(product.getTags().size());
+        UserEntity userEntity = em.find(UserEntity.class, 27);
+
+        Set<UserWeightEntity> uweSet = getUserTags(userEntity);
+        List<UserWeightEntity> uweList = new LinkedList<UserWeightEntity>();
+        uweList.addAll(uweSet);
+
+        //Collections.sort(uweList);
+        for (UserWeightEntity uwe : uweList) {
+            TagEntity tag = em.find(TagEntity.class, uwe.getTagId());
+            System.out.println(tag.getName() + ": " + uwe.getWeight());
+        }
+
         //Remember to close the connection.
         em.close();
         emfactory.close();
 
-        System.out.println(user.getUsername());
+//        try {
+//            DatabaseHandler dHandler = new DatabaseHandler();
+//            ProductEntity p = dHandler.findProduct(userEntity, "top");
+//            System.out.println(dHandler.getMeta(p).toString());
+//        }   catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+
+
     }
 
     /**
@@ -78,6 +104,35 @@ public class DBConnectionTesting {
     }
 
     /*-------------------------------Database stuff below------------------------------------*/
+
+
+    /**
+     * Returns all non-zero metatags belonging to a user.
+     * @param user
+     * @return
+     */
+    public static Set<UserWeightEntity> getUserTags(UserEntity user) {
+        Set<UserWeightEntity> resultSet = new HashSet<UserWeightEntity>();
+        Query query = em.createQuery("select uwe from UserWeightEntity uwe where uwe.userId = :userId");
+        query.setParameter("userId", user.getUserId());
+        if (query.getResultList().size() == 0) {
+            return null;
+        } else {
+            for (UserWeightEntity uwe : (List<UserWeightEntity>) query.getResultList()) {
+                if (uwe.getWeight() != 0) {
+                    resultSet.add(uwe);
+                }
+            }
+            return resultSet;
+        }
+    }
+
+    public static ProductEntity fetchProduct(String pid) {
+        Query query = em.createQuery("select p from ProductEntity p where p.pid = :pid");
+        query.setParameter("pid", pid);
+        return (ProductEntity) query.getSingleResult();
+    }
+
 
     /**
      *

@@ -105,7 +105,7 @@ public class UserEntity {
         return this.weightSet;
     }
 
-    public void setWeights(Set weightSet)     {
+    public void setWeights(Set<UserWeightEntity> weightSet)     {
         this.weightSet = weightSet;
     }
 

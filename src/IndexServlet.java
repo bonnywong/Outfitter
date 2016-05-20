@@ -1,4 +1,6 @@
 import Authentication.UserLogic;
+import Models.UserEntity;
+import testing.DatabaseHandler;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -7,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * Handles the login and registering step of the service.
@@ -41,6 +44,7 @@ public class IndexServlet extends HttpServlet {
                     //Attach UserEntity to the session.
                     request.getSession().setAttribute("user", userLogic.getUser(username));
                     dispatch(request, response, "/matching", "");
+                    userLogic.close();
                 } else {
                     System.out.println("Wrong username or password inserted!");
                     dispatch(request, response, "index.jsp", "");
@@ -62,14 +66,23 @@ public class IndexServlet extends HttpServlet {
                 System.out.println("SessionID: " + sessionId);
 
                 //User registration below.
-                if(userLogic.registerUser(username, password, email)) {
-                    System.out.println("Registration successful!");
-
-                } else {
-                    System.out.println("Registration failed!");
+                try {
+                    if(userLogic.registerUser(username, password, email)) {
+                        System.out.println("Registration successful!");
+                        UserEntity user = userLogic.getUser(username);
+                        userLogic.close();
+                        DatabaseHandler dbHandler = new DatabaseHandler();
+                        dbHandler.insertUserSettings(user);
+                        dbHandler.insertUserTags(user);
+                        dbHandler.insertUserBucketWeights(user);
+                        dbHandler.close();
+                    } else {
+                        System.out.println("Registration failed!");
+                    }
+                } catch (SQLException e) {
+                    System.err.println(e.getMessage());
                 }
                 dispatch(request, response, "index.jsp", "");
-                userLogic.close();
             }
         } else {
             //Nothing at the moment?
